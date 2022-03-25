@@ -1,71 +1,82 @@
-import React from "react";
-import {
-  Text,
-  Link,
-  HStack,
-  Center,
-  Heading,
-  Switch,
-  useColorMode,
-  NativeBaseProvider,
-  extendTheme,
-  VStack,
-  Code,
-} from "native-base";
-import NativeBaseIcon from "./components/NativeBaseIcon";
+import React, { useState } from "react";
+import { NativeRouter, Route, Link, Routes } from "react-router-native"; 
+import { Text, View, Alert, StyleSheet, ImageBackground, SafeAreaView, StatusBar, Platform, Button  } from "react-native";   
+import Home from "./routes/Home";
+import About from "./routes/About";
+import Guide from "./routes/Guide";
+import Nav from "./components/Nav"; 
+ 
 
-// Define the config
-const config = {
-  useSystemColorMode: false,
-  initialColorMode: "dark",
-};
+const STYLES = ['default', 'dark-content', 'light-content'];
+const TRANSITIONS = ['fade', 'slide', 'none']; 
+const pageStyles = StyleSheet.create({ 
+  container: { 
+      backgroundColor: '#000',
+      marginTop: 0,
+      padding: 0
+  },
+  image: { 
+      flex: 1,
+      justifyContent: "center" 
+  },
+  header: {
+      fontSize: 20
+  }, 
+  navItem: {
+      flex: 1,
+      alignItems: "center",
+      padding: 10
+  },
+  subNavItem: {
+      padding: 5
+  },
+  topic: {
+      textAlign: "center",
+      fontSize: 15
+  }
+});
 
-// extend the theme
-export const theme = extendTheme({ config });
+const App = () => {     
+  const [hidden, setHidden] = useState(false);
+  const [statusBarStyle, setStatusBarStyle] = useState(STYLES[0]);
+  const [statusBarTransition, setStatusBarTransition] = useState(TRANSITIONS[0]);
 
-export default function App() {
+  const changeStatusBarVisibility = () => setHidden(!hidden);
+
+  const changeStatusBarStyle = () => {
+    const styleId = STYLES.indexOf(statusBarStyle) + 1;
+    if (styleId === STYLES.length) {
+      setStatusBarStyle(STYLES[0]);
+    } else {
+      setStatusBarStyle(STYLES[styleId]);
+    }
+  };
+
+  const changeStatusBarTransition = () => {
+    const transition = TRANSITIONS.indexOf(statusBarTransition) + 1;
+    if (transition === TRANSITIONS.length) {
+      setStatusBarTransition(TRANSITIONS[0]);
+    } else {
+      setStatusBarTransition(TRANSITIONS[transition]);
+    }
+  };
+ 
   return (
-    <NativeBaseProvider>
-      <Center
-        _dark={{ bg: "blueGray.900" }}
-        _light={{ bg: "blueGray.50" }}
-        px={4}
-        flex={1}
-      >
-        <VStack space={5} alignItems="center">
-          <NativeBaseIcon />
-          <Heading size="lg">Welcome to NativeBase</Heading>
-          <HStack space={2} alignItems="center">
-            <Text>Edit</Text>
-            <Code>App.js</Code>
-            <Text>and save to reload.</Text>
-          </HStack>
-          <Link href="https://docs.nativebase.io" isExternal>
-            <Text color="primary.500" underline fontSize={"xl"}>
-              Learn NativeBase
-            </Text>
-          </Link>
-          <ToggleDarkMode />
-        </VStack>
-      </Center>
-    </NativeBaseProvider>
+    <SafeAreaView style={pageStyles.container}>
+      <StatusBar animated={true} backgroundColor="#61dafb" barStyle={statusBarStyle} showHideTransition={statusBarTransition} hidden={hidden} />
+      <NativeRouter> 
+        <View style={pageStyles.container}>     
+          <Nav/>
+          <Routes>
+            <Route exact path="/" element={<Home/>} /> 
+            <Route exact path="/guide" element={<Guide/>} /> 
+            <Route exact path="/about" element={<About/>} /> 
+          </Routes>    
+        </View>
+      </NativeRouter> 
+    </SafeAreaView>
   );
 }
 
-// Color Switch Component
-function ToggleDarkMode() {
-  const { colorMode, toggleColorMode } = useColorMode();
-  return (
-    <HStack space={2} alignItems="center">
-      <Text>Dark</Text>
-      <Switch
-        isChecked={colorMode === "light"}
-        onToggle={toggleColorMode}
-        aria-label={
-          colorMode === "light" ? "switch to dark mode" : "switch to light mode"
-        }
-      />
-      <Text>Light</Text>
-    </HStack>
-  );
-}
+
+export default App;
