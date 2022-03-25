@@ -1,10 +1,13 @@
 import React, { useState } from "react";
 import { NativeRouter, Route, Link, Routes } from "react-router-native"; 
+import * as WebRouter from "react-router"; 
 import { Text, View, Alert, StyleSheet, ImageBackground, SafeAreaView, StatusBar, Platform, Button  } from "react-native";   
 import Home from "./routes/Home";
-import About from "./routes/About";
+import History from "./routes/History";
 import Guide from "./routes/Guide";
 import Nav from "./components/Nav"; 
+import { Provider } from 'react-redux';
+import store from "./redux/store";
  
 
 const STYLES = ['default', 'dark-content', 'light-content'];
@@ -60,21 +63,23 @@ const App = () => {
       setStatusBarTransition(TRANSITIONS[transition]);
     }
   };
- 
+  
   return (
-    <SafeAreaView style={pageStyles.container}>
-      <StatusBar animated={true} backgroundColor="#61dafb" barStyle={statusBarStyle} showHideTransition={statusBarTransition} hidden={hidden} />
-      <NativeRouter> 
-        <View style={pageStyles.container}>     
-          <Nav/>
-          <Routes>
-            <Route exact path="/" element={<Home/>} /> 
-            <Route exact path="/guide" element={<Guide/>} /> 
-            <Route exact path="/about" element={<About/>} /> 
-          </Routes>    
-        </View>
-      </NativeRouter> 
-    </SafeAreaView>
+    <Provider store={store}>
+      <SafeAreaView style={pageStyles.container}>
+        <StatusBar animated={true} backgroundColor="#61dafb" barStyle={statusBarStyle} showHideTransition={statusBarTransition} hidden={hidden} />
+          <NativeRouter>
+            <View style={pageStyles.container}>     
+              <Nav/>
+              <Routes>
+                <Route exact path="/" element={<Home/>} /> 
+                <Route exact path="/history" element={<History/>} /> 
+                <Route exact path="/guide" element={<Guide/>} />  
+              </Routes>    
+            </View>
+          </NativeRouter>
+      </SafeAreaView>
+    </Provider>
   );
 }
 

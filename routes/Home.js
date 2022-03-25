@@ -2,7 +2,9 @@ import React, {useEffect} from 'react';
 import { Text, View, ImageBackground, StyleSheet, Alert, TextInput, ScrollView, Pressable } from 'react-native';
 import CurrencyInput from 'react-native-currency-input';
 import { useNavigate } from 'react-router-native'; 
+import { useDispatch } from "react-redux";
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { saveWizardDetails } from '../redux/actions/wizardActions';
 
 import patternImg from './../assets/bgPattern.png';   
 const pageStyles = StyleSheet.create({
@@ -80,14 +82,14 @@ const Button = (props) => {
 }
 
 const Home = () => {
-  const navigate = useNavigate();  
-  const history = []; 
+  const dispatch = useDispatch();
+  const navigate = useNavigate();   
   const [stepNumber, setStepNumber] = React.useState(0);
   const [totalWindows, setTotalWindows] = React.useState(0);
-  const [totalTickets, setTotalTickets] = React.useState(0);
-  const [moneyIn, setMoneyIn] = React.useState(0);
-  const [ticketCost, setCostPerTicket] = React.useState(0);
+  const [totalTickets, setTotalTickets] = React.useState(0); 
   const [takenWindows, setTakenWindows] = React.useState(0);
+  const [moneyIn, setMoneyIn] = React.useState('');
+  const [ticketCost, setCostPerTicket] = React.useState('');
    
   useEffect(() => { 
       async function handleIntro() {
@@ -102,7 +104,9 @@ const Home = () => {
         }
       } 
 
-      handleIntro();
+      if(!window || !window.navigator || !window.navigator.userAgent) {
+        handleIntro();
+      }
   }, []);
 
 
@@ -124,20 +128,22 @@ const Home = () => {
 
   const handleReset = () => {
         // record teh entry
-        history.push({
-            id: history.length + 1,
+        dispatch(saveWizardDetails({
+            id: history.length,
+            dt_tm: Date.now(),
             totalWindows,
             totalTickets,
             ticketCost,
             moneyIn,
             takenWindows
-        });
+        }));
+
         // Reset the step inputs
         setTotalWindows(0);
-        setTotalTickets(0);
-        setMoneyIn(0);
-        setCostPerTicket(0);
+        setTotalTickets(0); 
         setTakenWindows(0);
+        setMoneyIn('');
+        setCostPerTicket('');
         // Reset the step wizard stage
         setStepNumber(0);
   }

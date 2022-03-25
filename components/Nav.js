@@ -47,12 +47,11 @@ const Nav = () => {
     let location = useLocation();  
 
     const getNavLinkStyling = (routeName) => {  
-        const onCalculatorPage = routeName === 'guide' && location.pathname === '/guide'; 
-        const onGuidePage = routeName === 'calculator' && location.pathname === '/';
+        const onNavPage = routeName === location.pathname;
         const styleObj = {
             backgroundColor: '#012847'
         };
-        if(onCalculatorPage || onGuidePage) {
+        if(onNavPage) {
             styleObj.backgroundColor = "#28a9e2"; 
             styleObj.borderBottomColor = "#8cc63e";
             styleObj.borderBottomWidth = 2;
@@ -65,13 +64,12 @@ const Nav = () => {
     } 
 
     const getNavBtnTextStyle = (routeName) => {  
-        const onCalculatorPage = routeName === 'guide' && location.pathname === '/guide';
-        const onGuidePage = routeName === 'calculator' && location.pathname === '/';
+        const onNavPage = routeName === location.pathname;
         const styleObj = {
             color: '#FFF'
         };
 
-        if(onCalculatorPage || onGuidePage) {
+        if(onNavPage) {
            // styleObj.color = "#000"; 
         }  
 
@@ -80,14 +78,19 @@ const Nav = () => {
 
     return (
         <View style={styles.nav}>
-        <Link to="/" style={Object.assign({}, styles.navItem, getNavLinkStyling('calculator'))}>
-            <Text style={Object.assign({}, styles.text, getNavBtnTextStyle('calculator'))}>
-                Calculator
-            </Text>
-        </Link> 
-        <Link to="/guide" style={Object.assign({}, styles.navItem, getNavLinkStyling('guide'))}>
-            <Text style={Object.assign({}, styles.text, getNavBtnTextStyle('guide'))}>Guide</Text>
-        </Link>
+            <Link to="/" style={Object.assign({}, styles.navItem, getNavLinkStyling('/'))}>
+                <Text style={Object.assign({}, styles.text, getNavBtnTextStyle('/'))}>
+                    Calculator
+                </Text>
+            </Link> 
+            <Link to="/history" style={Object.assign({}, styles.navItem, getNavLinkStyling('history'))}>
+                <Text style={Object.assign({}, styles.text, getNavBtnTextStyle('history'))}>
+                    History
+                </Text>
+            </Link> 
+            <Link to="/guide" style={Object.assign({}, styles.navItem, getNavLinkStyling('guide'))}>
+                <Text style={Object.assign({}, styles.text, getNavBtnTextStyle('guide'))}>Guide</Text>
+            </Link>
         </View>
     );
 }; 
