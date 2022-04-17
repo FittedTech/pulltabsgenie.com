@@ -1,17 +1,21 @@
 import React, {useEffect} from 'react';
 import { Text, View, ImageBackground, StyleSheet, Alert, TextInput, ScrollView, Pressable } from 'react-native';
 import CurrencyInput from 'react-native-currency-input';
-import { useNavigate } from 'react-router-native'; 
+import { useNavigate, Link } from 'react-router-native'; 
 import { useDispatch } from "react-redux";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { saveWizardDetails } from '../redux/actions/wizardActions';
-
+import { FontAwesome } from '@fortawesome/fontawesome-svg-core';
 import patternImg from './../assets/bgPattern.png';   
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faArrowCircleLeft, faCalculator,faCircle } from '@fortawesome/free-solid-svg-icons';
+import MultiSlider from '@ptomasroos/react-native-multi-slider';
+
+
 const pageStyles = StyleSheet.create({
   container: {
-    marginTop: 0, 
-    minHeight: '100%',
-    height: 'auto'
+    marginTop: 0,  
+    height: '100vh'
   }, 
   image: { 
     flex: 1,
@@ -20,23 +24,42 @@ const pageStyles = StyleSheet.create({
     padding: '2.5%'
   },
   text: {
-      color: '#FFF'
+      color: '#333',
+      fontSize: 18,
+      margin: '1%',
+      padding: '2.5%', 
+      borderRadius: '5px'
+  },
+  wizardStepTitleWrapper: { 
+    color: '#fff',
+    backgroundColor: '#333',
+    padding: 5
   },
   wizardStepTitle: {
-    color: '#8cc63e',
+    color: '#FFF',
+    paddingLeft: 5, 
     fontSize: 20,
-    fontWeight: 'bold'
+    fontWeight: 'bold',
+    display: 'flex',
+    alignItems: "center",
+    justifyContent: 'space-between',
   },
   pageTitle: {
-      color: '#8cc63e',
-      fontSize: 24,
-      fontWeight: 'bold'
+      color: '#fff',
+      fontSize: 22,
+      fontWeight: 'bold',
+      paddingTop: 5,
+      paddingBottom: 5,
+      display: 'flex',
+      alignItems: "center",
+      justifyContent: 'center',
+      backgroundColor: '#333',
   },
   buttonText: {
       color: '#012847'
-  },
+  },      
   inputLabel: {
-      color: '#FFF',
+      color: '#000',
       fontWeight: 'bold',
       fontSize: 20
   },
@@ -61,7 +84,10 @@ const pageStyles = StyleSheet.create({
     padding: 10,
     backgroundColor: '#FFF'
   },
-  wizardStepWrapper: { 
+  wizardStepWrapper: {   
+      color: '#000',
+      backgroundColor: '#FFFFFF',
+      borderRadius: 10
   },
   wizardStepContent: { 
     padding: '1%'
@@ -126,6 +152,10 @@ const Home = () => {
     setStepNumber(stepNumber + 1);
   }
 
+  const getLastStep = () => {
+    setStepNumber(stepNumber - 1);
+  }
+
   const handleReset = () => {
         // record teh entry
         dispatch(saveWizardDetails({
@@ -151,10 +181,10 @@ const Home = () => {
   return (
     <View style={pageStyles.container}>  
         <ImageBackground source={patternImg} resizeMode="cover" style={pageStyles.image}>
-            <ScrollView style={pageStyles.container}>  
+            <ScrollView style={pageStyles.container} contentContainerStyle={{ flex: 1, justifyContent: 'center'}}>  
                 <View style={[pageStyles.wizardStepWrapper, getWizardStyling(0)]}>  
-                    <Text style={pageStyles.pageTitle}>Odds Calculator</Text> 
-                    <Text style={pageStyles.text}>To figure out the best game to play, use the calculator below. If you haven't read the game guide, we strongly suggest doing so before playing Pull-Tabs for the first time.</Text> 
+                    <Text style={pageStyles.pageTitle}> <span className="fa-layers fa-fw"> <FontAwesomeIcon icon={faCircle} size='1x'  style={{color: '#907ad6ff'}}/> <FontAwesomeIcon icon={faCalculator} size='1x' style={{color: '#fff', fontSize: 16}}/></span><span>Odds Calculator</span> </Text> 
+                    <Text style={pageStyles.text}>To figure out the best game to play, use the calculator below. If you haven't <Link to="/guide"><a href='#' style={{color: '#56cbf9ff'}}>read the game guide</a></Link>, we strongly suggest doing so before playing Pull-Tabs for the first time.</Text> 
                      <Button
                         onPress={() => getNextStep()}
                         title="Get Started"
@@ -164,7 +194,7 @@ const Home = () => {
                         /> 
                 </View> 
                 <View style={[pageStyles.wizardStepWrapper, getWizardStyling(1)]}> 
-                    <Text style={pageStyles.wizardStepTitle}>Step 1</Text> 
+                    <View style={pageStyles.wizardStepTitleWrapper}><Text style={pageStyles.wizardStepTitle}><FontAwesomeIcon onClick={getLastStep} icon={faArrowCircleLeft} size='2x' style={{color: '#fff', fontSize: 16}}/> Step 1</Text> </View>
                     <Text style={pageStyles.text}>Find the total ticket count of the Pull-Tabs game. This is the maximum number of tickets in the game, regardless of how much money has been put into the game.</Text> 
                     <Separator/>
                     <View style={pageStyles.wizardStepContent}> 
@@ -176,6 +206,7 @@ const Home = () => {
                             placeholder=""
                             keyboardType="numeric"
                         />
+                        <MultiSlider values={[0, 10000]}/>
                         <Button
                         onPress={() => getNextStep()}
                         title="Next Step"
@@ -186,8 +217,8 @@ const Home = () => {
                     </View>
                 </View>
                 <View style={[pageStyles.wizardStepWrapper, getWizardStyling(2)]}> 
-                    <Text style={pageStyles.wizardStepTitle}>Step 2</Text> 
-                    <Text style={pageStyles.text}>Find the amount of money played into the game. Most venues will have a 'ticket printout' that you can request with a running tally.</Text> 
+                <View style={pageStyles.wizardStepTitleWrapper}><Text style={pageStyles.wizardStepTitle}><FontAwesomeIcon onClick={getLastStep} icon={faArrowCircleLeft} size='2x' style={{color: '#fff', fontSize: 16}}/> Step 2</Text> </View>
+                <Text style={pageStyles.text}>Find the amount of money played into the game. Most venues will have a 'ticket printout' that you can request with a running tally.</Text>
                     <Separator/>
                     <Text style={pageStyles.inputLabel}>Total Money In</Text> 
                     <CurrencyInput
@@ -211,7 +242,7 @@ const Home = () => {
                     /> 
                 </View>
                 <View style={[pageStyles.wizardStepWrapper, getWizardStyling(3)]}> 
-                    <Text style={pageStyles.wizardStepTitle}>Step 3</Text> 
+                <View style={pageStyles.wizardStepTitleWrapper}> <Text style={pageStyles.wizardStepTitle}><FontAwesomeIcon onClick={getLastStep} icon={faArrowCircleLeft} size='2x' style={{color: '#fff', fontSize: 16}}/> Step 3</Text> </View>
                     <Text style={pageStyles.text}>How much does a ticket cost? Usually the ticket prices range between $0.25-$2.</Text> 
                     <Separator/>
                     <Text style={pageStyles.inputLabel}>Cost Per Ticket</Text> 
@@ -236,7 +267,7 @@ const Home = () => {
                     /> 
                 </View>
                 <View style={[pageStyles.wizardStepWrapper, getWizardStyling(4)]}>  
-                    <Text style={pageStyles.wizardStepTitle}>Step 4</Text> 
+                <View style={pageStyles.wizardStepTitleWrapper}> <Text style={pageStyles.wizardStepTitle}><FontAwesomeIcon onClick={getLastStep} icon={faArrowCircleLeft} size='2x' style={{color: '#fff', fontSize: 16}}/> Step 4</Text></View>
                     <Text style={pageStyles.text}>How many total windows are there?</Text> 
                     <Separator/>
                     <Text style={pageStyles.inputLabel}>Total Windows</Text> 
@@ -256,7 +287,7 @@ const Home = () => {
                     /> 
                 </View>
                 <View style={[pageStyles.wizardStepWrapper, getWizardStyling(5)]}> 
-                    <Text style={pageStyles.wizardStepTitle}>Step 5</Text> 
+                <View style={pageStyles.wizardStepTitleWrapper}> <Text style={pageStyles.wizardStepTitle}><FontAwesomeIcon onClick={getLastStep} icon={faArrowCircleLeft} size='2x' style={{color: '#fff', fontSize: 16}}/> Step 5</Text></View>
                     <Text style={pageStyles.text}>How many windows have been claimed?</Text> 
                     <Separator/>
                     <Text style={pageStyles.inputLabel}>Windows Taken</Text> 
@@ -276,7 +307,7 @@ const Home = () => {
                     /> 
                 </View> 
                 <View style={[pageStyles.wizardStepWrapper, getWizardStyling(6)]}> 
-                    <Text style={pageStyles.wizardStepTitle}>Step 6</Text> 
+                <View style={pageStyles.wizardStepTitleWrapper}> <Text style={pageStyles.wizardStepTitle}><FontAwesomeIcon onClick={getLastStep} icon={faArrowCircleLeft} size='2x' style={{color: '#fff', fontSize: 16}}/> Step 6</Text> </View>
                     <Text style={pageStyles.text}>That's it! If you are satisified with your selections, press the calculation button below and get the results.</Text> 
                     <Separator/>
                         <Text style={[pageStyles.text, {fontWeight: 'bold'}]}>Total Tickets: {totalTickets}</Text> 
